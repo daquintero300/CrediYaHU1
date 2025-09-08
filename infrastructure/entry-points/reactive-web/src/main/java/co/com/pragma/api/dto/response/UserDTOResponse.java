@@ -1,16 +1,16 @@
-package co.com.pragma.model.user;
+package co.com.pragma.api.dto.response;
+
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class User {
+public class UserDTOResponse {
     private String name;
     private String lastName;
     private LocalDate birthdate;

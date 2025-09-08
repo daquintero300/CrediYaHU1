@@ -5,6 +5,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'io.micrometer:micrometer-registry-prometheus'
-    // Jakarta Validation Implementation (e.g., Hibernate Validator)
+    // Jakarta
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+    implementation 'org.hibernate.orm:hibernate-core:6.4.4.Final'
+    // log4j
+    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
+    // Swagger
+    implementation "org.springdoc:springdoc-openapi-starter-webflux-ui:2.3.0"
+    // JWT
+    implementation 'com.auth0:java-jwt:4.4.0'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    // Spring Security
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
 }

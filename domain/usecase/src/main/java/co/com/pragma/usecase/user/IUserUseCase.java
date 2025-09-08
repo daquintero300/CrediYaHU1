@@ -1,12 +1,12 @@
-package co.com.pragma.model.user.gateways;
+package co.com.pragma.usecase.user;
 
 import co.com.pragma.model.user.User;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface UserRepository {
-
+public interface IUserUseCase {
     Mono<User> saveUser(User user);
-    Mono<User> findByEmail(String email);
+    Mono<User> validateUser(User user);
     Flux<User> findAllUsers();
+    Mono<User> findByEmail(String email);
 }

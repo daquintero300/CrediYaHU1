@@ -1,14 +1,13 @@
 package co.com.pragma.r2dbc.entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
-import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Table("users")
@@ -21,46 +20,37 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column("user_id")
-    private String id;
+    @Column(name = "id_user")
+    private Long idUser;
 
-    @NotNull
-    @NotBlank
-    @Column("name")
+    @Column(name = "name")
     private String name;
 
-    @NotNull
-    @NotBlank
-    @Column("last_name")
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column("birthdate")
-    private Date birthdate;
+    @Column(name = "birthdate")
+    private LocalDate birthdate;
 
-    @Column("address")
+    @Column(name = "address")
     private String address;
 
-    @Pattern(
-            regexp = "^\\+?\\d{1,3}?[- .]?\\d{7,12}$",
-            message = "El número de teléfono no es válido"
-    )
-    @Column("phone_number")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @NotNull
-    @NotBlank
-    @Email(message = "El formato del correo no es válido")
-    @Column("email")
+    @Column(name = "email")
     private String email;
 
-    @NotNull
-    @NotBlank
-    @DecimalMin(value = "0.0",
-            inclusive = true,
-            message = "El valor no puede ser menor que 0")
-    @DecimalMax(value = "15000000.0",
-            inclusive = true,
-            message = "El valor no puede superar 15,000,000")
-    @Column("base_salary")
+    @Column(name = "base_salary")
     private BigDecimal baseSalary;
+
+    @Column(name = "id_number")
+    private Long idNumber;
+
+    @Column(name = "password")
+    private String password;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "id_role")
+    private Long idRole;
 }

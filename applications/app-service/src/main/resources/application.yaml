@@ -25,7 +25,7 @@ cors:
 
 routes:
   paths:
-    tasks: "/api/v1/usuarios"
+    tasks: "/api/v1/**"
 
 adapters:
   r2dbc:
@@ -35,3 +35,19 @@ adapters:
     schema: "public"
     username: "postgres"
     password: "admin"
+
+springdoc:
+  packages-to-scan: co.com.pragma.api
+  paths-to-match: /api/v1/**
+
+logging:
+  level:
+    root: INFO
+    co.com.pragma: DEBUG
+
+security:
+  jwt:
+    key:
+      private: 44c85945bf275b34309169995aa43ccf737f9b2f332cdf5da777b664237f635a
+    expiration: 3600000
+    userGenerator: ADMIN123456
