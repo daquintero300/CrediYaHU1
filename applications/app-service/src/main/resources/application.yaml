@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   application:
-    name: "CrediYa"
+    name: "autenticacion"
   devtools:
     add-properties: false
   h2:
@@ -29,12 +29,12 @@ routes:
 
 adapters:
   r2dbc:
-    host: "localhost"
-    port: 5432
-    database: "authentication"
-    schema: "public"
-    username: "postgres"
-    password: "admin"
+    host: "${ADAPTERS_R2DBC_HOST_AUTHENTICATION}"
+    port: "${ADAPTERS_R2DBC_PORT_AUTHENTICATION}"
+    database: "${ADAPTERS_R2DBC_DATABASE_AUTHENTICATION}"
+    schema: "${ADAPTERS_R2DBC_SCHEMA}"
+    username: "${ADAPTERS_R2DBC_USERNAME}"
+    password: "${ADAPTERS_R2DBC_PASSWORD}"
 
 springdoc:
   packages-to-scan: co.com.pragma.api
@@ -48,6 +48,6 @@ logging:
 security:
   jwt:
     key:
-      private: 44c85945bf275b34309169995aa43ccf737f9b2f332cdf5da777b664237f635a
-    expiration: 3600000
-    userGenerator: ADMIN123456
+      private: "${JWT_KEY_PRIVATE}"
+    expiration: "${JWT_EXPIRATION}"
+    user-generator: "${JWT_USER_GENERATOR}"

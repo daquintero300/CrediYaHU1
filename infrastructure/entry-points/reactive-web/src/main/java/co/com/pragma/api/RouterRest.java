@@ -62,9 +62,9 @@ public class RouterRest {
         RouterFunction<ServerResponse> saveUser = route(POST("/api/v1/usuarios"), userhandler::listenSaveUser)
                 .filter(jwtAuthenticationFilter.requireRole(List.of("ADMIN","ADVISOR")));
         RouterFunction<ServerResponse> loginUser = route(POST("/api/v1/login"), authHandler::listenLoginUser);
-        RouterFunction<ServerResponse> findAllUsers = route(GET("/api/v1/usuarios"), userhandler::listenFinAllUsers)
+        RouterFunction<ServerResponse> findAllUsers = route(GET("/api/v1/usuarios"), userhandler::listenFindAllUsers)
                 .filter(jwtAuthenticationFilter.requireRole(List.of("ADVISOR")));
-        RouterFunction<ServerResponse> findUserByEmail = route(GET("/api/v1/usuarios/findUserByEmail"), userhandler::listenFinUserByEmail)
+        RouterFunction<ServerResponse> findUserByEmail = route(GET("/api/v1/usuarios/findUserByEmail"), userhandler::listenFindUserByEmail)
                 .filter(jwtAuthenticationFilter.requireRole(List.of("ADVISOR","CUSTOMER")));
 
         return saveUser.and(loginUser).and(findAllUsers).and(findUserByEmail);
