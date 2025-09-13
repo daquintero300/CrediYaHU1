@@ -24,7 +24,6 @@ public class UserHandler {
 
     public Mono<ServerResponse> listenSaveUser(@Validated ServerRequest serverRequest) {
         log.info("➡️ Ejecutando saveUser() de UserHandler");
-        System.out.println("se recibio la peticion saveUser");
         return serverRequest.bodyToMono(UserDTORequest.class)
                 .doOnNext(body -> log.info("📥 Payload recibido para guardar usuario: {}", body))
                 .flatMap(this::validate)
@@ -38,8 +37,8 @@ public class UserHandler {
                 .doOnError(error -> log.error("❌ Error al guardar usuario", error));
     }
 
-    public Mono<ServerResponse> listenFinAllUsers(ServerRequest serverRequest) {
-        log.info("➡️ Ejecutando listenFinAllUsers() de UserHandler");
+    public Mono<ServerResponse> listenFindAllUsers(ServerRequest serverRequest) {
+        log.info("➡️ Ejecutando listenFindAllUsers() de UserHandler");
         return iUserUseCase.findAllUsers()
                 .flatMap(UserMapper::toUserDTOResponse)
                 .collectList()
@@ -55,8 +54,8 @@ public class UserHandler {
                         log.error("❌ Error al obtener usuarios", error));
     }
 
-    public Mono<ServerResponse> listenFinUserByEmail(ServerRequest serverRequest) {
-        log.info("➡️ Ejecutando listenFinUserByEmail() de UserHandler");
+    public Mono<ServerResponse> listenFindUserByEmail(ServerRequest serverRequest) {
+        log.info("➡️ Ejecutando listenFindUserByEmail() de UserHandler");
         return Mono.justOrEmpty(serverRequest.queryParam("email"))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("El email es obligatorio")))
                 .flatMap(iUserUseCase::findByEmail)
