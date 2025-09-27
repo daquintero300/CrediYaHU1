@@ -4,6 +4,8 @@ import co.com.pragma.model.role.Role;
 import co.com.pragma.model.user.User;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 public interface ITokenUseCase {
-    Mono<String> createToken(User user, Role role);
+    Mono<Map<String, String>> createToken(User user, Role role);
 }

@@ -22,22 +22,20 @@ public class AuthHandler {
     private final Validator validator;
 
     public Mono<ServerResponse> listenLoginUser(@Validated ServerRequest serverRequest) {
-        log.info("➡️ Se recibio la peticion de login");
+        log.info("[INFO] Se recibio la peticion de login");
         return serverRequest.bodyToMono(AuthLoginDTORequest.class)
                 .flatMap(this::validate)
-                .flatMap(authLoginRequest -> {
-                    System.out.println("email " + authLoginRequest.username()
-                            + "\npassword " + authLoginRequest.password());
-                    return iAuthUserUseCase.login(authLoginRequest.username(), authLoginRequest.password());
-                })
+                .flatMap(authLoginRequest ->
+                    iAuthUserUseCase.login(authLoginRequest.username(), authLoginRequest.password())
+                )
                 .flatMap(token -> {
-                    log.info("✅ Login exitoso");
+                    log.info("[INFO] Login exitoso");
                     return ServerResponse.ok()
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(token);
                 })
                 .onErrorResume(e -> {
-                    log.error("❌ Error durante el login: {}", e.getMessage(), e);
+                    log.error("[ERROR] Error durante el login: {}", e.getMessage(), e);
                     return ServerResponse.status(401)
                             .bodyValue("Credenciales inválidas");
                 });

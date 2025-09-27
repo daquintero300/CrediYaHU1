@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "User API",
+                title = "AUTENTICACION",
                 version = "1.0",
                 description = "API para la gestión de usuarios con Spring WebFlux y RouterFunctions"
         )

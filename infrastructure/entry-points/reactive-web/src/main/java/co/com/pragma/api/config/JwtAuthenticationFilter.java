@@ -26,17 +26,17 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        log.info("➡️ Iniciando filtro de autenticación para path: {}", exchange.getRequest().getURI().getPath());
+        log.info("[INFO] Iniciando filtro de autenticación para path: {}", exchange.getRequest().getURI().getPath());
         String path = exchange.getRequest().getURI().getPath();
         if (path.startsWith("/api/v1/login") || path.startsWith("/webjars/swagger-ui")
                 || path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui.html")
                 || path.startsWith("/actuator")) {
-            log.info("Ruta excluida del filtro de autenticación: {}", path);
+            log.info("[INFO] Ruta excluida del filtro de autenticación: {}", path);
             return chain.filter(exchange);
         }
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.warn("❌ Token de autorización inválido o ausente");
+            log.warn("[WARN] Token de autorización inválido o ausente");
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return Mono.error(new Exception("Token de autorización inválido"));
         }
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter implements WebFilter {
                                 .getBody()
                 )
                 .map(claims -> {
-                    log.debug("✅ Token válido. Claims extraídos: {}", claims);
+                    log.debug("[INFO] Token válido. Claims extraídos: {}", claims);
                     exchange.getAttributes().put("claims", claims);
                     return claims;
                 })
@@ -58,12 +58,12 @@ public class JwtAuthenticationFilter implements WebFilter {
     public Mono<Boolean> hasRole(ServerRequest request, List<String> allowedRoles) {
         Object claimsAttr = request.exchange().getAttribute("claims");
         if (!(claimsAttr instanceof Claims claims)) {
-            log.warn("❌ Claims no encontrados o inválidos en la solicitud");
+            log.warn("[WARN] Claims no encontrados o inválidos en la solicitud");
             return Mono.just(false);
         }
         String userRole = claims.get("role", String.class);
         String user = claims.get("name", String.class);
-        log.info("➡️ Verificando rol del usuario {}: {}", user, userRole);
+        log.info("[INFO] Verificando rol del usuario {}: {}", user, userRole);
         return Mono.just(userRole != null && allowedRoles.contains(userRole));
     }
 
@@ -72,10 +72,10 @@ public class JwtAuthenticationFilter implements WebFilter {
                 hasRole(request, allowedRoles)
                         .flatMap(hasRole -> {
                             if (hasRole) {
-                                log.info("✅ Acceso permitido para roles: {}", allowedRoles);
+                                log.info("[INFO] Acceso permitido para roles: {}", allowedRoles);
                                 return next.handle(request);
                             } else {
-                                log.warn("❌ Acceso denegado para roles: {}", allowedRoles);
+                                log.warn("[WARN] Acceso denegado para roles: {}", allowedRoles);
                                 return Mono.error(new Exception("No tienes permiso para acceder a este recurso"));
                             }
                         });

@@ -14,6 +14,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -32,9 +33,9 @@ public class JwtUtils implements ITokenUseCase{
 
 
     @Override
-    public Mono<String> createToken(User user, Role role) {
+    public Mono<Map<String, String>> createToken(User user, Role role) {
 
-    return Mono.just(Jwts.builder()
+    String jwt = Jwts.builder()
             .setSubject(user.getEmail())
             .claim("name", user.getName())
             .claim("role", role.getRoleName())
@@ -45,6 +46,7 @@ public class JwtUtils implements ITokenUseCase{
             .setId(UUID.randomUUID().toString())
             .signWith(Keys.hmacShaKeyFor(this.privateKey.getBytes(StandardCharsets.UTF_8)),
                     SignatureAlgorithm.HS256)
-            .compact());
+            .compact();
+        return Mono.just(Map.of("token", jwt));
     }
 }

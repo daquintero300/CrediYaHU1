@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.Map;
+
 import static org.mockito.Mockito.when;
 
 
@@ -65,24 +67,6 @@ class AuthUserUseCaseTest {
                 .verify();
     }
 
-//    @Test
-//    void errorIfPasswordIncorrect() {
-//        String email = "email@test.com";
-//        String password = "password";
-//
-//        User user = new User();
-//        user.setIdRole(1L);
-//        user.setPassword("encodedPassword");
-//
-//        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
-//        when(iPasswordEncoderUseCase.matches(password, user.getPassword())).thenReturn(Mono.just(false));
-//
-//        StepVerifier.create(authUserUseCase.login(email, password))
-//                .expectErrorMatches(e -> e instanceof IllegalArgumentException &&
-//                        e.getMessage().equals("Password incorrect"))  // CAMBIO A INGLÉS para unificar con los demás
-//                .verify();
-//    }
-
     @Test
     void testErrorIfRoleNotFound() {
         String email = "email@test.com";
@@ -104,6 +88,7 @@ class AuthUserUseCaseTest {
 
     @Test
     void testSuccessReturnsToken() {
+
         String email = "email@test.com";
         String password = "password";
         String expectedToken = "token123";
@@ -115,13 +100,19 @@ class AuthUserUseCaseTest {
         Role role = new Role();
         role.setRoleName("ADMIN");
 
+        Map<String, String> tokenResponse = Map.of(
+                "token", expectedToken,
+                "type", "Bearer",
+                "expiresIn", "3600"
+        );
+
         when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
         when(iPasswordEncoderUseCase.matches(password, user.getPassword())).thenReturn(Mono.just(true));
         when(roleRepository.findRoleById(user.getIdRole())).thenReturn(Mono.just(role));
-        when(iTokenUseCase.createToken(user, role)).thenReturn(Mono.just(expectedToken));
+        when(iTokenUseCase.createToken(user, role)).thenReturn(Mono.just(tokenResponse));
 
         StepVerifier.create(authUserUseCase.login(email, password))
-                .expectNext(expectedToken)
+                .expectNext(tokenResponse)
                 .verifyComplete();
     }
 }
