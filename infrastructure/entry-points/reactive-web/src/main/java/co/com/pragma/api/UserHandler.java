@@ -23,27 +23,27 @@ public class UserHandler {
     private final IUserUseCase iUserUseCase;
 
     public Mono<ServerResponse> listenSaveUser(@Validated ServerRequest serverRequest) {
-        log.info("➡️ Ejecutando saveUser() de UserHandler");
+        log.info("[INFO] Ejecutando saveUser() de UserHandler");
         return serverRequest.bodyToMono(UserDTORequest.class)
                 .doOnNext(body -> log.info("📥 Payload recibido para guardar usuario: {}", body))
                 .flatMap(this::validate)
                 .flatMap(UserMapper::toUserDomain)
                 .flatMap(iUserUseCase::saveUser)
                 .flatMap(UserMapper::toUserDTOResponse)
-                .doOnSuccess(user -> log.info("✅ Usuario guardado exitosamente"))
+                .doOnSuccess(user -> log.info("[INFO] Usuario guardado exitosamente"))
                 .flatMap(savedUser -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(savedUser))
-                .doOnError(error -> log.error("❌ Error al guardar usuario", error));
+                .doOnError(error -> log.error("[ERROR] Error al guardar usuario", error));
     }
 
     public Mono<ServerResponse> listenFindAllUsers(ServerRequest serverRequest) {
-        log.info("➡️ Ejecutando listenFindAllUsers() de UserHandler");
+        log.info("[INFO] Ejecutando listenFindAllUsers() de UserHandler");
         return iUserUseCase.findAllUsers()
                 .flatMap(UserMapper::toUserDTOResponse)
                 .collectList()
                 .doOnSuccess(users ->
-                        log.info("✅ Usuarios obtenidos: {}", users.size()))
+                        log.info("[INFO] Usuarios obtenidos: {}", users.size()))
                 .flatMap(users -> {
                     System.out.println(users);
                     return ServerResponse.ok()
@@ -51,17 +51,17 @@ public class UserHandler {
                             .bodyValue(users);
                 })
                 .doOnError(error ->
-                        log.error("❌ Error al obtener usuarios", error));
+                        log.error("[ERROR] Error al obtener usuarios", error));
     }
 
     public Mono<ServerResponse> listenFindUserByEmail(ServerRequest serverRequest) {
-        log.info("➡️ Ejecutando listenFindUserByEmail() de UserHandler");
+        log.info("[INFO] Ejecutando listenFindUserByEmail() de UserHandler");
         return Mono.justOrEmpty(serverRequest.queryParam("email"))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("El email es obligatorio")))
                 .flatMap(iUserUseCase::findByEmail)
                 .flatMap(UserMapper::toUserDTOResponse)
                 .doOnSuccess(user ->
-                        log.info("✅ Usuario obtenido correctamente"))
+                        log.info("[INFO] Usuario obtenido correctamente"))
                 .flatMap(user -> {
                     System.out.println(user);
                     return ServerResponse.ok()
@@ -69,7 +69,7 @@ public class UserHandler {
                             .bodyValue(user);
                 })
                 .doOnError(error ->
-                        log.error("❌ Error al obtener usuario por email", error));
+                        log.error("[ERROR] Error al obtener usuario por email", error));
     }
 
     private <T> Mono<T> validate(T dto) {

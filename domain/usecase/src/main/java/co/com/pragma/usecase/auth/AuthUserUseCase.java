@@ -7,6 +7,8 @@ import co.com.pragma.usecase.token.ITokenUseCase;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 
 @RequiredArgsConstructor
 public class AuthUserUseCase implements IAuthUserUseCase{
@@ -17,24 +19,15 @@ public class AuthUserUseCase implements IAuthUserUseCase{
     private final IPasswordEncoderUseCase iPasswordEncoderUseCase;
 
     @Override
-    public Mono<String> login(String email, String password) {
-
+    public Mono<Map<String, String>> login(String email, String password) {
         if (email == null || email.isBlank()) {
-            return Mono.error(new IllegalArgumentException("The email cannot be null or empty"));
+            return Mono.error(new IllegalArgumentException("EL email no puede ser nulo o vació"));
         }
         if (password == null || password.isBlank()) {
-            return Mono.error(new IllegalArgumentException("The password cannot be null or empty"));
+            return Mono.error(new IllegalArgumentException("EL password no puede ser nulo o vació"));
         }
-
-        System.out.println("name " + email
-                + "\npassword " + password);
-
         return userRepository.findByEmail(email)
-                .flatMap(user -> {
-                    System.out.println(user.getName());
-                    return Mono.just(user);
-                })
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("User does not exist")))
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("El usuario no existe")))
                 .flatMap(user ->
                     iPasswordEncoderUseCase.matches(password, user.getPassword())
                             .flatMap( matches -> {
@@ -42,13 +35,10 @@ public class AuthUserUseCase implements IAuthUserUseCase{
                                     return Mono.error(new IllegalArgumentException("Contraseña incorrecta"));
                                 }
                                 return  roleRepository.findRoleById(user.getIdRole())
-                                        .switchIfEmpty(Mono.error(new IllegalArgumentException("Role not found")))
+                                        .switchIfEmpty(Mono.error(new IllegalArgumentException("Rol no encontrado")))
                                         .flatMap(role -> iTokenUseCase.createToken(user, role));
                             })
                 )
-                .flatMap(token -> {
-                    System.out.println(token);
-                    return Mono.just(token);
-                });
+                .flatMap(token -> Mono.just(token));
     }
 }
